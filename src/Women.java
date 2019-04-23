@@ -8,15 +8,23 @@ public class Women extends Person implements Serializable {
     private Tracker tracker;
 
     public Women() {
-        super();
+        this("Women", 0, 0, 0, new Tracker());
     }
 
     public Women(String name, double weight, double height, int age, Tracker tracker) {
-        super(name, weight, height, age, tracker);
+        this.name = name;
+        this.weight = weight;
+        this.height = height;
+        this.age = age;
+        this.tracker = tracker;
     }
 
-    public double calculateBMI() {
-        return 655.0955 + (9.5634 * weight) + (1.8496 * height) - (4.6756 * age);
+    public double calculateBEE() {
+        return 655.0955 + (9.5634 * this.weight) + (1.8496 * this.height) - (4.6756 * this.age);
+    }
+
+    double calculateBMI() {
+        return this.weight / (this.height * this.height / 10000);
     }
 
     public String getName() {
@@ -51,12 +59,21 @@ public class Women extends Person implements Serializable {
         this.age = age;
     }
 
-    @Override
+
     public Tracker getTracker() {
         return tracker;
     }
 
     public void setTracker(Tracker tracker) {
         this.tracker = tracker;
+    }
+
+    public String toString() {
+        String s = "";
+        s += "Name: " + this.name + " female";
+        s += "\nWeight: " + this.weight;
+        s += "\nHeight: " + this.height;
+        s += "\nAge: " + this.age;
+        return s;
     }
 }

@@ -6,7 +6,7 @@ public abstract class Person {
     Tracker tracker;
 
     public Person() {
-        this.name = "Unnamed";
+        this.name = "Person";
         this.weight = 0.0;
         this.height = 0.0;
         this.age = 0;
@@ -21,10 +21,16 @@ public abstract class Person {
         this.tracker = tracker;
     }
 
+    abstract double calculateBEE();
+
     abstract double calculateBMI();
 
     public Tracker getTracker() {
         return tracker;
+    }
+
+    public void setTracker(Tracker tracker) {
+        this.tracker = tracker;
     }
 
     public String getName() {
@@ -61,10 +67,10 @@ public abstract class Person {
 
     public String toString() {
         String s = "";
-        s += "Name: " + name;
-        s += "\nWeight: " + weight;
-        s += "\nHeight: " + height;
-        s += "\nAge: " + age;
+        s += "Name: " + this.name;
+        s += "\nWeight: " + this.weight;
+        s += "\nHeight: " + this.height;
+        s += "\nAge: " + this.age;
         return s;
     }
 }

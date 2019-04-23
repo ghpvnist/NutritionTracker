@@ -93,7 +93,7 @@ public class Main1 {
                     view(data);
                     break;
                 case "5":
-                    //viewProfile(data);
+                    viewProfile(data);
                     break;
                 case "6":
                     on = false;
@@ -318,45 +318,45 @@ public class Main1 {
         }
     }
 
-//    private static void viewProfile(Person data) {
-//
-//        Scanner sc = new Scanner(System.in);
-//        boolean cont = true;
-//        while (cont) {
-//            System.out.println(data);
-//            System.out.println();
-//            System.out.println("What do you want to do?\n1) Change name\n2) Change weight\n3) Change height\n4) Change age\n5) Quit");
-//            String s = sc.nextLine();
-//            switch (s) {
-//                case "1":
-//                    System.out.print("Enter your new name: ");
-//                    String name = sc.nextLine();
-//                    data.setName(name);
-//                    System.out.println(data.getName());
-//                    break;
-//                case "2":
-//                    System.out.print("Enter your new weight: ");
-//                    double weight = Double.parseDouble(sc.nextLine());
-//                    data.setWeight(weight);
-//                    break;
-//                case "3":
-//                    System.out.print("Enter your new height: ");
-//                    double height = Double.parseDouble(sc.nextLine());
-//                    data.setHeight(height);
-//                    break;
-//                case "4":
-//                    System.out.print("Enter your new age: ");
-//                    int age = Integer.parseInt(sc.nextLine());
-//                    data.setAge(age);
-//                    break;
-//                case "5":
-//                    cont = false;
-//                    break;
-//                default:
-//                    break;
-//            }
-//        }
-//    }
+    private static void viewProfile(Person data) {
+
+        Scanner sc = new Scanner(System.in);
+        boolean cont = true;
+        while (cont) {
+            System.out.println(data);
+            System.out.println();
+            System.out.println("What do you want to do?\n1) Change name\n2) Change weight\n3) Change height\n4) Change age\n5) Quit");
+            String s = sc.nextLine();
+            switch (s) {
+                case "1":
+                    System.out.print("Enter your new name: ");
+                    String name = sc.nextLine();
+                    data.setName(name);
+                    System.out.println(data.getName());
+                    break;
+                case "2":
+                    System.out.print("Enter your new weight: ");
+                    double weight = Double.parseDouble(sc.nextLine());
+                    data.setWeight(weight);
+                    break;
+                case "3":
+                    System.out.print("Enter your new height: ");
+                    double height = Double.parseDouble(sc.nextLine());
+                    data.setHeight(height);
+                    break;
+                case "4":
+                    System.out.print("Enter your new age: ");
+                    int age = Integer.parseInt(sc.nextLine());
+                    data.setAge(age);
+                    break;
+                case "5":
+                    cont = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
     private static void updateData(Person data) {
         System.out.println(data);

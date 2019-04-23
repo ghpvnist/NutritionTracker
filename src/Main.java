@@ -11,26 +11,24 @@ import java.util.Scanner;
 public class Main {
 
     public static void main(String args[]) {
-        //Tracker data = null;
-        Data data = new Data(new HashMap<>());
-        data.getFoodList().put("Food", new Nutrition());
-        Tracker tracker = new Tracker(new HashMap<String, Data>());
-        tracker.getDataList().put("00/00/0000", data);
-        updateData(tracker);
-        tracker = retrieveData();
-        startApp(tracker);
-        updateData(tracker);
+        Person person = null;
+        person = retrieveData();
+        startApp(person);
+        updateData(person);
         return;
     }
 
-    private static Tracker retrieveData() {
-        Tracker data = null;
+    private static Person retrieveData() {
+        Person data = null;
         try {
             FileInputStream fileIn = new FileInputStream("src/nutrition_tracker.ser");
             ObjectInputStream in = new ObjectInputStream(fileIn);
-            data = (Tracker) in.readObject();
+            data = (Person) in.readObject();
             in.close();
             fileIn.close();
+        } catch (FileNotFoundException fnf) {
+            System.out.println("There is no data. Creating new account...");
+            return makeProfile();
         } catch (IOException i) {
             i.printStackTrace();
             return null;
@@ -39,16 +37,40 @@ public class Main {
             c.printStackTrace();
             return null;
         }
-
-        for(String key : data.getDataList().keySet()) {
-            System.out.println("Date: " + key);
-            System.out.println(data.getDataList().get(key));
-            System.out.println();
+        if (data.getTracker() != null) {
+            for(String key : data.getTracker().getDataList().keySet()) {
+                System.out.println("Date: " + key);
+                System.out.println(data.getTracker().getDataList().get(key));
+                System.out.println();
+            }
         }
+
         return data;
     }
 
-    private static void startApp(Tracker data) {
+    private static Person makeProfile() {
+        Person data;
+        Scanner sc = new Scanner(System.in);
+        System.out.print("Please enter your name: ");
+        String name = sc.nextLine();
+        System.out.println("What is your gender of birth? (This will only be used to calculate the BMI)\n1) Male\n2) Female\n");
+        String gender = sc.nextLine();
+        System.out.print("Please enter your weight in kilograms: ");
+        double weight = Double.parseDouble(sc.nextLine());
+        System.out.print("Please enter your height in centimeters: ");
+        double height = Double.parseDouble(sc.nextLine());
+        System.out.print("Please enter your age: ");
+        int age = Integer.parseInt(sc.nextLine());
+        if (gender.equals("1")) {
+            data = new Men(name, weight, height, age, new Tracker());
+        } else {
+            data = new Women(name, weight, height, age, new Tracker());
+        }
+        updateData(data);
+        return data;
+    }
+
+    private static void startApp(Person data) {
         Scanner sc = new Scanner(System.in);
         boolean on = true;
         while (on) {
@@ -57,7 +79,8 @@ public class Main {
             System.out.println("2) Edit");
             System.out.println("3) Delete");
             System.out.println("4) View all data");
-            System.out.println("5) Quit");
+            System.out.println("5) View profile");
+            System.out.println("6) Quit");
             String response = sc.nextLine();
             switch (response) {
                 case "1":
@@ -73,6 +96,9 @@ public class Main {
                     view(data);
                     break;
                 case "5":
+                    viewProfile(data);
+                    break;
+                case "6":
                     on = false;
                     break;
                 default:
@@ -81,13 +107,16 @@ public class Main {
         }
     }
 
-    private static void add(Tracker data) {
+    private static void add(Person data) {
+        if (data.getTracker() == null) {
+            data.setTracker(new Tracker());
+        }
         Scanner sc = new Scanner(System.in);
         HashMap<String, Nutrition> foodList = new HashMap<>();
         boolean on = true;
         System.out.println("Input the date in 00/00/0000 format:\n");
         String date = sc.nextLine();
-        while (data.getDataList().get(date) != null) {
+        while (data.getTracker().getDataList().get(date) != null) {
             System.out.println("This date already exists. Do you want to overwrite data?\n1) Yes\n2) No\n");
             String ans = sc.nextLine();
             if (ans.equals("2")) {
@@ -164,31 +193,35 @@ public class Main {
                     break;
             }
             Data newData = new Data(foodList);
-            data.getDataList().put(date, newData);
+            data.getTracker().getDataList().put(date, newData);
             System.out.println("All food(s) have been added for " + date);
         }
 
     }
 
-    private static void edit(Tracker data) {
-        if (data == null) {
+    private static void edit(Person data) {
+        if (data.getTracker() == null) {
             System.out.println("There is no data to edit.");
             return;
         }
         Scanner sc = new Scanner(System.in);
         boolean edit = true;
-        if (data.getDataList().keySet().isEmpty()) {
+        if (data.getTracker().getDataList().keySet().isEmpty()) {
             System.out.println("There are no dated lists to show");
             return;
         }
         System.out.println("Which date do you want to edit? (00/00/0000)");
-        for (String key: data.getDataList().keySet()) {
+        for (String key: data.getTracker().getDataList().keySet()) {
             System.out.println(key);
         }
         System.out.println();
         String s1 = sc.nextLine();
-        Data retrievedData = data.getDataList().get(s1);
+        Data retrievedData = data.getTracker().getDataList().get(s1);
         HashMap<String, Nutrition> map = retrievedData.getFoodList();
+        if (map.keySet().isEmpty()) {
+            System.out.println("There are no foods to edit");
+            return;
+        }
         System.out.println("Which food do you want to edit? (Case sensitive)");
         for (String key: map.keySet()) {
             System.out.println(key);
@@ -271,37 +304,100 @@ public class Main {
 
     }
 
-    private static void delete(Tracker data) {
-        if (data == null) {
+    private static void delete(Person data) {
+        if (data.getTracker() == null) {
+            System.out.println("There is no data to delete.");
+            return;
+        }
+        if (data.getTracker().getDataList().isEmpty()) {
             System.out.println("There is no data to delete.");
             return;
         }
         Scanner sc = new Scanner(System.in);
         System.out.println("Which date do you want to delete? (00/00/0000)");
-        for (String key: data.getDataList().keySet()) {
+        for (String key: data.getTracker().getDataList().keySet()) {
             System.out.println(key);
         }
         String s = sc.nextLine();
         try {
-            data.getDataList().remove(s);
+            data.getTracker().getDataList().remove(s);
         } catch (Exception e) {
             System.err.println("You cannot remove " + e + ". It does not exist or is not of right format");
         }
     }
 
-    private static void view(Tracker data) {
-        if (data == null) {
+    private static void view(Person data) {
+        if (data.getTracker() == null) {
             System.out.println("There is no data to display.");
             return;
         }
-        for(String key: data.getDataList().keySet()) {
-            System.out.println(data.getDataList().get(key));
+        if (data.getTracker().getDataList().isEmpty()) {
+            System.out.println("There is no data to display.");
+            return;
+        }
+        for(String key: data.getTracker().getDataList().keySet()) {
+            System.out.println(data.getTracker().getDataList().get(key));
             System.out.println();
         }
     }
 
+    private static void viewProfile(Person data) {
+        Scanner sc = new Scanner(System.in);
+        boolean cont = true;
+        while (cont) {
+            System.out.println("Name: " + data.getName());
+            System.out.println("Weight: " + data.getWeight());
+            System.out.println("Height: " + data.getHeight());
+            System.out.println("Age: " + data.getAge());
+            System.out.println();
+            System.out.println("What do you want to do?" +
+                    "\n1) Change name" +
+                    "\n2) Change weight" +
+                    "\n3) Change height" +
+                    "\n4) Change age" +
+                    "\n5) Calculate BEE" +
+                    "\n6) Calculate BMI" +
+                    "\n7) Quit");
+            String s = sc.nextLine();
+            switch (s) {
+                case "1":
+                    System.out.print("Enter your new name: ");
+                    String name = sc.nextLine();
+                    data.setName(name);
+                    System.out.println(data.getName());
+                    break;
+                case "2":
+                    System.out.print("Enter your new weight: ");
+                    double weight = Double.parseDouble(sc.nextLine());
+                    data.setWeight(weight);
+                    break;
+                case "3":
+                    System.out.print("Enter your new height: ");
+                    double height = Double.parseDouble(sc.nextLine());
+                    data.setHeight(height);
+                    break;
+                case "4":
+                    System.out.print("Enter your new age: ");
+                    int age = Integer.parseInt(sc.nextLine());
+                    data.setAge(age);
+                    break;
+                case "5":
+                    System.out.printf("Your Basic Energy Expenditure is: %.2f cal\n", data.calculateBEE());
+                    break;
+                case "6":
+                    System.out.printf("Your BMI is: %.2f\n", data.calculateBMI());
+                    break;
+                case "7":
+                    cont = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 
-    private static void updateData(Tracker data) {
+
+    private static Person updateData(Person data) {
         try {
             FileOutputStream fileOut =
                     new FileOutputStream("src/nutrition_tracker.ser", false);
@@ -309,15 +405,10 @@ public class Main {
             out.writeObject(data);
             out.close();
             fileOut.close();
-            System.out.println("Serialized data is saved in src/nutrition_tracker.ser");
-            Tracker a = retrieveData();
-            for(String key: a.getDataList().keySet()) {
-                System.out.println(data.getDataList().get(key));
-                System.out.println();
-            }
         } catch (IOException i) {
             i.printStackTrace();
         }
+        return data;
     }
 
 }
