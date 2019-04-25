@@ -233,10 +233,10 @@ public class Main {
             System.out.println("Which nutrition do you want to edit?");
             System.out.println("1) Calorie: " + nutrition.getCalorie());
             System.out.println("2) Serving size: " + nutrition.getServingSize());
-            System.out.println("3) Fat: " + nutrition.getFat());
+            System.out.println("3) Fat: \n" + nutrition.getFat());
             System.out.println("4) Cholesterol: " + nutrition.getCholesterol());
             System.out.println("5) Sodium: " + nutrition.getSodium());
-            System.out.println("6) Carbohydrate: " + nutrition.getCarbohydrate());
+            System.out.println("6) Carbohydrate: \n" + nutrition.getCarbohydrate());
             System.out.println("7) Protein: " + nutrition.getProtein());
             System.out.println("8) Quit");
             String s3 = sc.nextLine();
